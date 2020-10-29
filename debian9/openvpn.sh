@@ -461,7 +461,8 @@ sudo cp /etc/stunnel/stunnel.pem ~
 wget -O /usr/local/bin/userdelexpired "https://www.dropbox.com/s/cwe64ztqk8w622u/userdelexpired?dl=1" && chmod +x /usr/local/bin/userdelexpired
 
 # install ddos deflate
-sudo apt-get install grepcidr
+apt install tcpdump -y
+apt install grepcidr -y
 cd
 sudo apt-get -y install dnsutils dsniff
 wget https://github.com/jgmdev/ddos-deflate/archive/master.zip
