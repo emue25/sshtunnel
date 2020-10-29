@@ -17,6 +17,17 @@ ln -fs /usr/share/zoneinfo/Asia/Kuala_Lumpur /etc/localtime
 echo 1 > /proc/sys/net/ipv6/conf/all/disable_ipv6
 sed -i '$ i\echo 1 > /proc/sys/net/ipv6/conf/all/disable_ipv6' /etc/rc.local
 
+# install screenfetch
+cd
+rm -rf /root/.bashrc
+wget -O /root/.bashrc https://raw.githubusercontent.com/emue25/cream/mei/.bashrc
+
+#text gambar
+apt-get -y install boxes
+# text pelangi
+apt-get -y install ruby
+sudo gem install lolcat
+
 # update repository
 apt update -y
 
@@ -416,7 +427,12 @@ apt-get -y install dnsutils
 
 # download script
 cd
-wget https://raw.githubusercontent.com/brantbell/cream/mei/install-premiumscript.sh -O - -o /dev/null|sh
+sudo apt-get install zip
+sudo apt-get install unzip
+cd /usr/local/bin/
+wget "https://github.com/emue25/cream/raw/mei/menu.zip"
+unzip menu.zip
+chmod +x /usr/local/bin/*
 
 #cronjoob
 echo "0 0 * * * root /sbin/reboot" > /etc/cron.d/reboot
@@ -444,6 +460,21 @@ sudo cp /etc/stunnel/stunnel.pem ~
 #auto delete
 wget -O /usr/local/bin/userdelexpired "https://www.dropbox.com/s/cwe64ztqk8w622u/userdelexpired?dl=1" && chmod +x /usr/local/bin/userdelexpired
 
+# install ddos deflate
+sudo apt-get install grepcidr
+cd
+sudo apt-get -y install dnsutils dsniff
+wget https://github.com/jgmdev/ddos-deflate/archive/master.zip
+unzip master.zip
+cd ddos-deflate-master
+./install.sh
+rm -rf /root/master.zip
+
+#finishing
+apt-get -y autoremove
+chown -R www-data:www-data /home/vps/public_html
+/etc/init.d/squid restart
+/etc/init.d/openvpn restart
 # Delete script
 rm -f /root/openvpn.sh
 
