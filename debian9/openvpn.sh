@@ -323,9 +323,29 @@ comp-lzo
 verb 3
 END
 
-cd
-
 sed -i $MYIP2 /etc/openvpn/client-tcp-25.ovpn;
+
+# Buat config client SSL 443
+cat > /etc/openvpn/client-ssl-443.ovpn <<-END
+##### DONT FORGET FOR SUPPORT US #####
+client
+dev tun
+proto tcp
+remote xxxxxxxxx 443
+resolv-retry infinite
+route-method exe
+nobind
+persist-key
+persist-tun
+auth-user-pass
+comp-lzo
+verb 3
+up /etc/openvpn/update-resolv-conf
+down /etc/openvpn/update-resolv-conf
+route xxxxxxxxx 255.255.255.255 net_gateway
+END
+cd
+sed -i $MYIP2 /etc/openvpn/client-ssl-443.ovpn;
 
 # pada tulisan xxx ganti dengan alamat ip address VPS anda 
 /etc/init.d/openvpn restart
@@ -362,6 +382,14 @@ cp /etc/openvpn/client-tcp-25.ovpn /home/vps/public_html/client-tcp-25.ovpn
 # Copy config OpenVPN client ke home directory root agar mudah didownload ( UDP 25 )
 cp /etc/openvpn/client-udp-25.ovpn /home/vps/public_html/client-udp-25.ovpn
 
+
+# masukkan certificatenya ke dalam config client SSL 443
+echo '<ca>' >> /etc/openvpn/client-ssl-443.ovpn
+cat /etc/openvpn/ca.crt >> /etc/openvpn/client-ssl-443.ovpn
+echo '</ca>' >> /etc/openvpn/client-ssl-443.ovpn
+
+# Copy config OpenVPN client ke home directory root agar mudah didownload ( SSL 443 )
+cp /etc/openvpn/client-ssl-443.ovpn /home/vps/public_html/client-ssl-443.ovpn
 
 # iptables-persistent
 apt install iptables-persistent -y
