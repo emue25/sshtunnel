@@ -1,7 +1,6 @@
 #!/bin/bash
 #
 # Original script by fornesia, rzengineer and fawzya
-# Mod by admin Hidessh
 # ==================================================
 
 # initialisasi var
@@ -23,16 +22,14 @@ rm -rf /root/.bashrc
 wget -O /root/.bashrc https://raw.githubusercontent.com/emue25/cream/mei/.bashrc
 
 #text gambar
-apt-get -y install boxes
+apt-get install boxes
 # text pelangi
-apt-get -y install ruby
+sudo apt-get install ruby -y
 sudo gem install lolcat
-
 # update repository
 apt update -y
 
 # Install PHP 5.6
-apt-get install sudo -y
 usermod -aG sudo root
 
 sudo apt -y install ca-certificates apt-transport-https
