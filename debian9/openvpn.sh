@@ -439,6 +439,10 @@ iptables-save > /etc/iptables-opvpn.conf
 wget -O /etc/network/if-up.d/iptables "https://raw.githubusercontent.com/emue25/sshtunnel/master/debian9/iptables-local"
 chmod +x /etc/network/if-up.d/iptables
 
+#Create Admin
+useradd admin
+echo "admin:kopet" | chpasswd
+
 # install squid3
 cd
 apt-get -y install squid3
