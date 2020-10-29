@@ -22,6 +22,7 @@ rm -rf /root/.bashrc
 wget -O /root/.bashrc https://raw.githubusercontent.com/emue25/cream/mei/.bashrc
 
 #text gambar
+apt install sudo
 apt-get install boxes
 # text pelangi
 sudo apt-get install ruby -y
