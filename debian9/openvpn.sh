@@ -131,7 +131,7 @@ dh dh2048.pem
 plugin /usr/lib/openvpn/openvpn-plugin-auth-pam.so login
 client-cert-not-required
 username-as-common-name
-server 10.5.0.0 255.255.255.0
+server 192.168.10.0 255.255.255.0
 ifconfig-pool-persist ipp.txt
 push "redirect-gateway def1"
 push "dhcp-option DNS 1.1.1.1"
@@ -156,11 +156,15 @@ dh dh2048.pem
 plugin /usr/lib/openvpn/openvpn-plugin-auth-pam.so login
 client-cert-not-required
 username-as-common-name
-server 10.6.0.0 255.255.255.0
+server 192.168.20.0 255.255.255.0
 ifconfig-pool-persist ipp.txt
 push "redirect-gateway def1"
 push "dhcp-option DNS 1.1.1.1"
 push "dhcp-option DNS 1.0.0.1"
+push "route-method exe"
+push "route-delay 2"
+socket-flags TCP_NODELAY
+push "socket-flags TCP_NODELAY"
 keepalive 5 30
 comp-lzo
 persist-key
@@ -181,11 +185,15 @@ dh dh2048.pem
 plugin /usr/lib/openvpn/openvpn-plugin-auth-pam.so login
 client-cert-not-required
 username-as-common-name
-server 10.7.0.0 255.255.255.0
+server 192.168.30.0 255.255.255.0
 ifconfig-pool-persist ipp.txt
 push "redirect-gateway def1"
 push "dhcp-option DNS 1.1.1.1"
 push "dhcp-option DNS 1.0.0.1"
+push "route-method exe"
+push "route-delay 2"
+socket-flags TCP_NODELAY
+push "socket-flags TCP_NODELAY"
 keepalive 5 30
 comp-lzo
 persist-key
@@ -206,11 +214,15 @@ dh dh2048.pem
 plugin /usr/lib/openvpn/openvpn-plugin-auth-pam.so login
 client-cert-not-required
 username-as-common-name
-server 10.8.0.0 255.255.255.0
+server 192.168.40.0 255.255.255.0
 ifconfig-pool-persist ipp.txt
 push "redirect-gateway def1"
 push "dhcp-option DNS 1.1.1.1"
 push "dhcp-option DNS 1.0.0.1"
+push "route-method exe"
+push "route-delay 2"
+socket-flags TCP_NODELAY
+push "socket-flags TCP_NODELAY"
 keepalive 5 30
 comp-lzo
 persist-key
@@ -403,19 +415,19 @@ iptables -t mangle -X
 iptables -P INPUT ACCEPT
 iptables -P FORWARD ACCEPT
 iptables -P OUTPUT ACCEPT
-iptables -t nat -I POSTROUTING -s 10.5.0.0/24 -o eth0 -j MASQUERADE
-iptables -t nat -I POSTROUTING -s 10.6.0.0/24 -o eth0 -j MASQUERADE
-iptables -t nat -I POSTROUTING -s 10.7.0.0/24 -o eth0 -j MASQUERADE
-iptables -t nat -I POSTROUTING -s 10.8.0.0/24 -o eth0 -j MASQUERADE
+iptables -t nat -I POSTROUTING -s 192.168.10.0/24 -o eth0 -j MASQUERADE
+iptables -t nat -I POSTROUTING -s 192.168.20.0/24 -o eth0 -j MASQUERADE
+iptables -t nat -I POSTROUTING -s 192.168.30.0/24 -o eth0 -j MASQUERADE
+iptables -t nat -I POSTROUTING -s 192.168.40.0/24 -o eth0 -j MASQUERADE
 
 iptables -A INPUT -i eth0 -m state --state NEW -p tcp --dport 3306 -j ACCEPT
 iptables -A INPUT -i eth0 -m state --state NEW -p tcp --dport 7300 -j ACCEPT
 iptables -A INPUT -i eth0 -m state --state NEW -p udp --dport 7300 -j ACCEPT
 
-iptables -t nat -I POSTROUTING -s 10.5.0.0/24 -o ens3 -j MASQUERADE
-iptables -t nat -I POSTROUTING -s 10.6.0.0/24 -o ens3 -j MASQUERADE
-iptables -t nat -I POSTROUTING -s 10.7.0.0/24 -o ens3 -j MASQUERADE
-iptables -t nat -I POSTROUTING -s 10.8.0.0/24 -o ens3 -j MASQUERADE
+iptables -t nat -I POSTROUTING -s 192.168.10.0/24 -o ens3 -j MASQUERADE
+iptables -t nat -I POSTROUTING -s 192.168.20.0/24 -o ens3 -j MASQUERADE
+iptables -t nat -I POSTROUTING -s 192.168.30.0/24 -o ens3 -j MASQUERADE
+iptables -t nat -I POSTROUTING -s 192.168.40.0/24 -o ens3 -j MASQUERADE
 
 iptables-save > /etc/iptables/rules.v4
 chmod +x /etc/iptables/rules.v4
