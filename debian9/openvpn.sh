@@ -1,6 +1,7 @@
 #!/bin/bash
 #
 # Original script by fornesia, rzengineer and fawzya
+# Mod by admin Hidessh
 # ==================================================
 
 # initialisasi var
@@ -10,27 +11,17 @@ MYIP=$(wget -qO- ipv4.icanhazip.com);
 MYIP2="s/xxxxxxxxx/$MYIP/g";
 
 # set time GMT +7
-ln -fs /usr/share/zoneinfo/Asia/Kuala_Lumpur /etc/localtime
+ln -fs /usr/share/zoneinfo/Asia/Jakarta /etc/localtime
 
 # disable ipv6
 echo 1 > /proc/sys/net/ipv6/conf/all/disable_ipv6
 sed -i '$ i\echo 1 > /proc/sys/net/ipv6/conf/all/disable_ipv6' /etc/rc.local
 
-# install screenfetch
-cd
-rm -rf /root/.bashrc
-wget -O /root/.bashrc https://raw.githubusercontent.com/emue25/cream/mei/.bashrc
-
-#text gambar
-apt install sudo
-apt-get install boxes
-# text pelangi
-sudo apt-get install ruby -y
-sudo gem install lolcat
 # update repository
 apt update -y
 
 # Install PHP 5.6
+apt-get install sudo -y
 usermod -aG sudo root
 
 sudo apt -y install ca-certificates apt-transport-https
@@ -46,10 +37,10 @@ cd
 sudo apt-get -y install nginx
 rm /etc/nginx/sites-enabled/default
 rm /etc/nginx/sites-available/default
-wget -O /etc/nginx/nginx.conf "https://raw.githubusercontent.com/emue25/sshtunnel/master/debian9/nginx-default.conf"
+wget -O /etc/nginx/nginx.conf "https://raw.githubusercontent.com/idtunnel/sshtunnel/master/debian9/nginx-default.conf"
 mkdir -p /home/vps/public_html
 echo "<?php phpinfo() ?>" > /home/vps/public_html/info.php
-wget -O /etc/nginx/conf.d/vps.conf "https://raw.githubusercontent.com/emue25/sshtunnel/master/debian9/vhost-nginx.conf"
+wget -O /etc/nginx/conf.d/vps.conf "https://raw.githubusercontent.com/idtunnel/sshtunnel/master/debian9/vhost-nginx.conf"
 /etc/init.d/nginx restart
 
 # instal nginx php5.6 
@@ -68,10 +59,10 @@ cd
 
 
 # Edit port apache2 ke 8090
-wget -O /etc/apache2/ports.conf "https://raw.githubusercontent.com/emue25/sshtunnel/master/debian9/apache2.conf"
+wget -O /etc/apache2/ports.conf "https://raw.githubusercontent.com/idtunnel/sshtunnel/master/debian9/apache2.conf"
 
 # Edit port virtualhost apache2 ke 8090
-wget -O /etc/apache2/sites-enabled/000-default.conf "https://raw.githubusercontent.com/emue25/sshtunnel/master/debian9/virtualhost.conf"
+wget -O /etc/apache2/sites-enabled/000-default.conf "https://raw.githubusercontent.com/idtunnel/sshtunnel/master/debian9/virtualhost.conf"
 
 # restart apache2
 /etc/init.d/apache2 restart
@@ -88,7 +79,7 @@ mkdir /etc/openvpn/easy-rsa/keys
 
 # Kemudian edit file variabel easy-rsa
 # nano /etc/openvpn/easy-rsa/vars
-wget -O /etc/openvpn/easy-rsa/vars "https://raw.githubusercontent.com/emue25/sshtunnel/master/debian9/vars.conf"
+wget -O /etc/openvpn/easy-rsa/vars "https://raw.githubusercontent.com/idtunnel/sshtunnel/master/debian9/vars.conf"
 # edit projek export KEY_NAME="white-vps"
 # Save dan keluar dari editor
 
@@ -117,11 +108,11 @@ echo "unique_subject = no" >> keys/index.txt.attr
 # generate ta.key
 openvpn --genkey --secret keys/ta.key
 
-# Buat config server UDP 110
+# Buat config server UDP 1194
 cd /etc/openvpn
 
-cat > /etc/openvpn/server-udp-110.conf <<-END
-port 110
+cat > /etc/openvpn/server-udp-1194.conf <<-END
+port 1194
 proto udp
 dev tun
 ca easy-rsa/keys/ca.crt
@@ -134,19 +125,19 @@ username-as-common-name
 server 10.5.0.0 255.255.255.0
 ifconfig-pool-persist ipp.txt
 push "redirect-gateway def1"
-push "dhcp-option DNS 1.1.1.1"
-push "dhcp-option DNS 1.0.0.1"
+push "dhcp-option DNS 8.8.8.8"
+push "dhcp-option DNS 8.8.4.4"
 keepalive 5 30
 comp-lzo
 persist-key
 persist-tun
-status server-udp-110.log
+status server-udp-1194.log
 verb 3
 END
 
-# Buat config server TCP 110
-cat > /etc/openvpn/server-tcp-110.conf <<-END
-port 110
+# Buat config server TCP 1194
+cat > /etc/openvpn/server-tcp-1194.conf <<-END
+port 1194
 proto tcp
 dev tun
 ca easy-rsa/keys/ca.crt
@@ -159,23 +150,19 @@ username-as-common-name
 server 10.6.0.0 255.255.255.0
 ifconfig-pool-persist ipp.txt
 push "redirect-gateway def1"
-push "dhcp-option DNS 1.1.1.1"
-push "dhcp-option DNS 1.0.0.1"
-push "route-method exe"
-push "route-delay 2"
-socket-flags TCP_NODELAY
-push "socket-flags TCP_NODELAY"
+push "dhcp-option DNS 8.8.8.8"
+push "dhcp-option DNS 8.8.4.4"
 keepalive 5 30
 comp-lzo
 persist-key
 persist-tun
-status server-tcp-110.log
+status server-tcp-1194.log
 verb 3
 END
 
-# Buat config server UDP 25
-cat > /etc/openvpn/server-udp-25.conf <<-END
-port 25
+# Buat config server UDP 2200
+cat > /etc/openvpn/server-udp-2200.conf <<-END
+port 2200
 proto udp
 dev tun
 ca easy-rsa/keys/ca.crt
@@ -188,23 +175,19 @@ username-as-common-name
 server 10.7.0.0 255.255.255.0
 ifconfig-pool-persist ipp.txt
 push "redirect-gateway def1"
-push "dhcp-option DNS 1.1.1.1"
-push "dhcp-option DNS 1.0.0.1"
-push "route-method exe"
-push "route-delay 2"
-socket-flags TCP_NODELAY
-push "socket-flags TCP_NODELAY"
+push "dhcp-option DNS 8.8.8.8"
+push "dhcp-option DNS 8.8.4.4"
 keepalive 5 30
 comp-lzo
 persist-key
 persist-tun
-status server-udp-25.log
+status server-udp-2200.log
 verb 3
 END
 
-# Buat config server TCP 25
-cat > /etc/openvpn/server-tcp-25.conf <<-END
-port 25
+# Buat config server TCP 2200
+cat > /etc/openvpn/server-tcp-2200.conf <<-END
+port 2200
 proto tcp
 dev tun
 ca easy-rsa/keys/ca.crt
@@ -217,17 +200,13 @@ username-as-common-name
 server 10.8.0.0 255.255.255.0
 ifconfig-pool-persist ipp.txt
 push "redirect-gateway def1"
-push "dhcp-option DNS 1.1.1.1"
-push "dhcp-option DNS 1.0.0.1"
-push "route-method exe"
-push "route-delay 2"
-socket-flags TCP_NODELAY
-push "socket-flags TCP_NODELAY"
+push "dhcp-option DNS 8.8.8.8"
+push "dhcp-option DNS 8.8.4.4"
 keepalive 5 30
 comp-lzo
 persist-key
 persist-tun
-status server-tcp-25.log
+status server-tcp-2200.log
 verb 3
 END
 
@@ -256,14 +235,16 @@ mkdir clientconfig
 cp /etc/openvpn/easy-rsa/keys/{white-vps.crt,white-vps.key,ca.crt,ta.key} clientconfig/
 cd clientconfig
 
-# Buat config client UDP 110
+# Buat config client UDP 1194
 cd /etc/openvpn
-cat > /etc/openvpn/client-udp-110.ovpn <<-END
-##### DONT FORGET FOR SUPPORT US #####
+cat > /etc/openvpn/client-udp-1194.ovpn <<-END
+##### WELCOME TO HideSSH #####
+##### WWW.HideSSH.COM #####
+##### DONT FORGET TO SUPPORT US #####
 client
 dev tun
 proto udp
-remote xxxxxxxxx 110
+remote xxxxxxxxx 1194
 resolv-retry infinite
 route-method exe
 nobind
@@ -274,16 +255,17 @@ comp-lzo
 verb 3
 END
 
-sed -i $MYIP2 /etc/openvpn/client-udp-110.ovpn;
+sed -i $MYIP2 /etc/openvpn/client-udp-1194.ovpn;
 
-# Buat config client TCP 110
-cat > /etc/openvpn/client-tcp-110.ovpn <<-END
-##### DONT FORGET FOR SUPPORT US #####
+# Buat config client TCP 1194
+cat > /etc/openvpn/client-tcp-1194.ovpn <<-END
+##### WELCOME TO HideSSH #####
+##### WWW.HideSSHSSH.COM #####
+##### DONT FORGET TO SUPPORT US #####
 client
 dev tun
 proto tcp
-remote xxxxxxxxx 110
-http-proxy xxxxxxxxx 8080
+remote xxxxxxxxx 1194
 resolv-retry infinite
 route-method exe
 nobind
@@ -294,15 +276,17 @@ comp-lzo
 verb 3
 END
 
-sed -i $MYIP2 /etc/openvpn/client-tcp-110.ovpn;
+sed -i $MYIP2 /etc/openvpn/client-tcp-1194.ovpn;
 
-# Buat config client UDP 25
-cat > /etc/openvpn/client-udp-25.ovpn <<-END
-##### DONT FORGET FOR SUPPORT US #####
+# Buat config client UDP 2200
+cat > /etc/openvpn/client-udp-2200.ovpn <<-END
+##### WELCOME TO HideSSH #####
+##### WWW.HideSSH.COM #####
+##### DONT FORGET TO SUPPORT US #####
 client
 dev tun
 proto udp
-remote xxxxxxxxx 25
+remote xxxxxxxxx 2200
 resolv-retry infinite
 route-method exe
 nobind
@@ -313,16 +297,22 @@ comp-lzo
 verb 3
 END
 
-sed -i $MYIP2 /etc/openvpn/client-udp-25.ovpn;
+sed -i $MYIP2 /etc/openvpn/client-udp-2200.ovpn;
 
-# Buat config client TCP 25
-cat > /etc/openvpn/client-tcp-25.ovpn <<-END
-##### DONT FORGET FOR SUPPORT US #####
+# Buat config client TCP 2200
+cat > /etc/openvpn/client-tcp-2200.ovpn <<-END
+##### WELCOME TO HideSSH #####
+##### WWW.HideSSH.COM #####
+##### DONT FORGET TO SUPPORT US #####
 client
 dev tun
 proto tcp
-remote xxxxxxxxx 25
-http-proxy xxxxxxxxx 8080
+remote xxxxxxxxx 2200
+##### Modification VPN #####
+http-proxy-retry
+http-proxy xxxxxxxxx 3128
+http-proxy-option CUSTOM-HEADER Host google.com
+##### DONT FORGET TO SUPPORT US #####
 resolv-retry infinite
 route-method exe
 nobind
@@ -333,73 +323,45 @@ comp-lzo
 verb 3
 END
 
-sed -i $MYIP2 /etc/openvpn/client-tcp-25.ovpn;
-
-# Buat config client SSL 443
-cat > /etc/openvpn/client-ssl-443.ovpn <<-END
-##### DONT FORGET FOR SUPPORT US #####
-client
-dev tun
-proto tcp
-remote xxxxxxxxx 443
-resolv-retry infinite
-route-method exe
-nobind
-persist-key
-persist-tun
-auth-user-pass
-comp-lzo
-verb 3
-up /etc/openvpn/update-resolv-conf
-down /etc/openvpn/update-resolv-conf
-route xxxxxxxxx 255.255.255.255 net_gateway
-END
 cd
-sed -i $MYIP2 /etc/openvpn/client-ssl-443.ovpn;
+
+sed -i $MYIP2 /etc/openvpn/client-tcp-2200.ovpn;
 
 # pada tulisan xxx ganti dengan alamat ip address VPS anda 
 /etc/init.d/openvpn restart
 
-# masukkan certificatenya ke dalam config client TCP 110
-echo '<ca>' >> /etc/openvpn/client-tcp-110.ovpn
-cat /etc/openvpn/ca.crt >> /etc/openvpn/client-tcp-110.ovpn
-echo '</ca>' >> /etc/openvpn/client-tcp-110.ovpn
+# masukkan certificatenya ke dalam config client TCP 1194
+echo '<ca>' >> /etc/openvpn/client-tcp-1194.ovpn
+cat /etc/openvpn/ca.crt >> /etc/openvpn/client-tcp-1194.ovpn
+echo '</ca>' >> /etc/openvpn/client-tcp-1194.ovpn
 
 # masukkan certificatenya ke dalam config client UDP 1194
-echo '<ca>' >> /etc/openvpn/client-udp-110.ovpn
-cat /etc/openvpn/ca.crt >> /etc/openvpn/client-udp-110.ovpn
-echo '</ca>' >> /etc/openvpn/client-udp-110.ovpn
+echo '<ca>' >> /etc/openvpn/client-udp-1194.ovpn
+cat /etc/openvpn/ca.crt >> /etc/openvpn/client-udp-1194.ovpn
+echo '</ca>' >> /etc/openvpn/client-udp-1194.ovpn
 
-# Copy config OpenVPN client ke home directory root agar mudah didownload ( TCP 110 )
-cp /etc/openvpn/client-tcp-110.ovpn /home/vps/public_html/client-tcp-110.ovpn
+# Copy config OpenVPN client ke home directory root agar mudah didownload ( TCP 1194 )
+cp /etc/openvpn/client-tcp-1194.ovpn /home/vps/public_html/client-tcp-1194.ovpn
 
-# Copy config OpenVPN client ke home directory root agar mudah didownload ( UDP 110 )
-cp /etc/openvpn/client-udp-110.ovpn /home/vps/public_html/client-udp-110.ovpn
+# Copy config OpenVPN client ke home directory root agar mudah didownload ( UDP 1194 )
+cp /etc/openvpn/client-udp-1194.ovpn /home/vps/public_html/client-udp-1194.ovpn
 
-# masukkan certificatenya ke dalam config client TCP 25
-echo '<ca>' >> /etc/openvpn/client-tcp-25.ovpn
-cat /etc/openvpn/ca.crt >> /etc/openvpn/client-tcp-25.ovpn
-echo '</ca>' >> /etc/openvpn/client-tcp-25.ovpn
+# masukkan certificatenya ke dalam config client TCP 2200
+echo '<ca>' >> /etc/openvpn/client-tcp-2200.ovpn
+cat /etc/openvpn/ca.crt >> /etc/openvpn/client-tcp-2200.ovpn
+echo '</ca>' >> /etc/openvpn/client-tcp-2200.ovpn
 
-# masukkan certificatenya ke dalam config client UDP 25
-echo '<ca>' >> /etc/openvpn/client-udp-25.ovpn
-cat /etc/openvpn/ca.crt >> /etc/openvpn/client-udp-25.ovpn
-echo '</ca>' >> /etc/openvpn/client-udp-25.ovpn
+# masukkan certificatenya ke dalam config client UDP 2200
+echo '<ca>' >> /etc/openvpn/client-udp-2200.ovpn
+cat /etc/openvpn/ca.crt >> /etc/openvpn/client-udp-2200.ovpn
+echo '</ca>' >> /etc/openvpn/client-udp-2200.ovpn
 
-# Copy config OpenVPN client ke home directory root agar mudah didownload ( TCP 25 )
-cp /etc/openvpn/client-tcp-25.ovpn /home/vps/public_html/client-tcp-25.ovpn
+# Copy config OpenVPN client ke home directory root agar mudah didownload ( TCP 2200 )
+cp /etc/openvpn/client-tcp-2200.ovpn /home/vps/public_html/client-tcp-2200.ovpn
 
-# Copy config OpenVPN client ke home directory root agar mudah didownload ( UDP 25 )
-cp /etc/openvpn/client-udp-25.ovpn /home/vps/public_html/client-udp-25.ovpn
+# Copy config OpenVPN client ke home directory root agar mudah didownload ( UDP 2200 )
+cp /etc/openvpn/client-udp-2200.ovpn /home/vps/public_html/client-udp-2200.ovpn
 
-
-# masukkan certificatenya ke dalam config client SSL 443
-echo '<ca>' >> /etc/openvpn/client-ssl-443.ovpn
-cat /etc/openvpn/ca.crt >> /etc/openvpn/client-ssl-443.ovpn
-echo '</ca>' >> /etc/openvpn/client-ssl-443.ovpn
-
-# Copy config OpenVPN client ke home directory root agar mudah didownload ( SSL 443 )
-cp /etc/openvpn/client-ssl-443.ovpn /home/vps/public_html/client-ssl-443.ovpn
 
 # iptables-persistent
 apt install iptables-persistent -y
@@ -449,74 +411,54 @@ iptables -A POSTROUTING -t nat -j MASQUERADE
 iptables-save > /etc/iptables-opvpn.conf
 
 # Restore iptables
-wget -O /etc/network/if-up.d/iptables "https://raw.githubusercontent.com/emue25/sshtunnel/master/debian9/iptables-local"
+wget -O /etc/network/if-up.d/iptables "https://raw.githubusercontent.com/idtunnel/sshtunnel/master/debian9/iptables-local"
 chmod +x /etc/network/if-up.d/iptables
 
-#Create Admin
-useradd admin
-echo "admin:kopet" | chpasswd
+# Restore iptables rc.local
+# wget -O /etc/rc.local "https://raw.githubusercontent.com/whitevps2/sshtunnel/master/debian9/iptables-openvpn"
+# chmod +x /etc/rc.local
 
 # install squid3
 cd
 apt-get -y install squid3
-wget -O /etc/squid/squid.conf "https://raw.githubusercontent.com/emue25/sshtunnel/master/debian9/squid3.conf"
+wget -O /etc/squid/squid.conf "https://raw.githubusercontent.com/idtunnel/sshtunnel/master/debian9/squid3.conf"
 sed -i $MYIP2 /etc/squid/squid.conf;
 /etc/init.d/squid restart
 
-#remove
-apt-get -y remove --purge unscd
-apt-get -y install dnsutils
-
 # download script
-cd
-sudo apt-get install zip
-sudo apt-get install unzip
-cd /usr/local/bin/
-wget "https://github.com/emue25/cream/raw/mei/menu.zip"
-unzip menu.zip
-chmod +x /usr/local/bin/*
+cd /usr/bin
+wget -O menu "https://raw.githubusercontent.com/idtunnel/sshtunnel/master/debian9/menu.sh"
+wget -O usernew "https://raw.githubusercontent.com/idtunnel/sshtunnel/master/debian9/usernew.sh"
+wget -O trial "https://raw.githubusercontent.com/idtunnel/sshtunnel/master/debian9/trial.sh"
+wget -O hapus "https://raw.githubusercontent.com/idtunnel/sshtunnel/master/debian9/hapus.sh"
+wget -O cek "https://raw.githubusercontent.com/idtunnel/sshtunnel/master/debian9/user-login.sh"
+wget -O member "https://raw.githubusercontent.com/idtunnel/sshtunnel/master/debian9/user-list.sh"
+wget -O jurus69 "https://raw.githubusercontent.com/idtunnel/sshtunnel/master/debian9/restart.sh"
+wget -O speedtest "https://raw.githubusercontent.com/idtunnel/sshtunnel/master/debian9/speedtest_cli.py"
+wget -O info "https://raw.githubusercontent.com/idtunnel/sshtunnel/master/debian9/info.sh"
+wget -O about "https://raw.githubusercontent.com/idtunnel/sshtunnel/master/debian9/about.sh"
+wget -O delete "https://raw.githubusercontent.com/idtunnel/sshtunnel/master/debian9/delete.sh"
 
-#cronjoob
 echo "0 0 * * * root /sbin/reboot" > /etc/cron.d/reboot
+
+chmod +x menu
+chmod +x usernew
+chmod +x trial
+chmod +x hapus
+chmod +x cek
+chmod +x member
+chmod +x jurus69
+chmod +x speedtest
+chmod +x info
+chmod +x about
+chmod +x delete
 
 # restart opevpn
 /etc/init.d/openvpn restart
 
-#ssl
-apt update && apt upgrade -y
-apt install stunnel4 -y
-cd /etc/stunnel/
-openssl req -new -newkey rsa:2048 -days 3650 -nodes -x509 -sha256 -subj '/CN=127.0.0.1/O=localhost/C=US' -keyout /etc/stunnel/stunnel.pem -out /etc/stunnel/stunnel.pem
-sudo touch stunnel.conf
-echo "client = no" | sudo tee -a /etc/stunnel/stunnel.conf
-echo "[openvpn]" | sudo tee -a /etc/stunnel/stunnel.conf
-echo "accept = 443" | sudo tee -a /etc/stunnel/stunnel.conf
-echo "connect = 127.0.0.1:110" | sudo tee -a /etc/stunnel/stunnel.conf
-echo "cert = /etc/stunnel/stunnel.pem" | sudo tee -a /etc/stunnel/stunnel.conf
-sudo sed -i -e 's/ENABLED=0/ENABLED=1/g' /etc/default/stunnel4
-iptables -A INPUT -p tcp --dport 443 -j ACCEPT
-sudo cp /etc/stunnel/stunnel.pem ~
-/etc/init.d/stunnel4 restart
-
 #auto delete
 wget -O /usr/local/bin/userdelexpired "https://www.dropbox.com/s/cwe64ztqk8w622u/userdelexpired?dl=1" && chmod +x /usr/local/bin/userdelexpired
 
-# install ddos deflate
-apt install tcpdump -y
-apt install grepcidr -y
-cd
-sudo apt-get -y install dnsutils dsniff
-wget https://github.com/jgmdev/ddos-deflate/archive/master.zip
-unzip master.zip
-cd ddos-deflate-master
-./install.sh
-rm -rf /root/master.zip
-
-#finishing
-apt-get -y autoremove
-chown -R www-data:www-data /home/vps/public_html
-/etc/init.d/squid restart
-/etc/init.d/openvpn restart
 # Delete script
 rm -f /root/openvpn.sh
 
