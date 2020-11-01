@@ -108,11 +108,11 @@ echo "unique_subject = no" >> keys/index.txt.attr
 # generate ta.key
 openvpn --genkey --secret keys/ta.key
 
-# Buat config server UDP 1194
+# Buat config server UDP 110
 cd /etc/openvpn
 
-cat > /etc/openvpn/server-udp-1194.conf <<-END
-port 1194
+cat > /etc/openvpn/server-udp-110.conf <<-END
+port 110
 proto udp
 dev tun
 ca easy-rsa/keys/ca.crt
@@ -125,19 +125,19 @@ username-as-common-name
 server 10.5.0.0 255.255.255.0
 ifconfig-pool-persist ipp.txt
 push "redirect-gateway def1"
-push "dhcp-option DNS 8.8.8.8"
-push "dhcp-option DNS 8.8.4.4"
+push "dhcp-option DNS 1.1.1.1"
+push "dhcp-option DNS 1.0.0.1"
 keepalive 5 30
 comp-lzo
 persist-key
 persist-tun
-status server-udp-1194.log
+status server-udp-110.log
 verb 3
 END
 
-# Buat config server TCP 1194
-cat > /etc/openvpn/server-tcp-1194.conf <<-END
-port 1194
+# Buat config server TCP 110
+cat > /etc/openvpn/server-tcp-110.conf <<-END
+port 110
 proto tcp
 dev tun
 ca easy-rsa/keys/ca.crt
@@ -150,13 +150,13 @@ username-as-common-name
 server 10.6.0.0 255.255.255.0
 ifconfig-pool-persist ipp.txt
 push "redirect-gateway def1"
-push "dhcp-option DNS 8.8.8.8"
-push "dhcp-option DNS 8.8.4.4"
+push "dhcp-option DNS 1.1.1.1"
+push "dhcp-option DNS 1.0.0.1"
 keepalive 5 30
 comp-lzo
 persist-key
 persist-tun
-status server-tcp-1194.log
+status server-tcp-110.log
 verb 3
 END
 
@@ -235,16 +235,14 @@ mkdir clientconfig
 cp /etc/openvpn/easy-rsa/keys/{white-vps.crt,white-vps.key,ca.crt,ta.key} clientconfig/
 cd clientconfig
 
-# Buat config client UDP 1194
+# Buat config client UDP 110
 cd /etc/openvpn
-cat > /etc/openvpn/client-udp-1194.ovpn <<-END
-##### WELCOME TO HideSSH #####
-##### WWW.HideSSH.COM #####
+cat > /etc/openvpn/client-udp-110.ovpn <<-END
 ##### DONT FORGET TO SUPPORT US #####
 client
 dev tun
 proto udp
-remote xxxxxxxxx 1194
+remote xxxxxxxxx 110
 resolv-retry infinite
 route-method exe
 nobind
@@ -255,17 +253,16 @@ comp-lzo
 verb 3
 END
 
-sed -i $MYIP2 /etc/openvpn/client-udp-1194.ovpn;
+sed -i $MYIP2 /etc/openvpn/client-udp-110.ovpn;
 
-# Buat config client TCP 1194
-cat > /etc/openvpn/client-tcp-1194.ovpn <<-END
-##### WELCOME TO HideSSH #####
-##### WWW.HideSSHSSH.COM #####
+# Buat config client TCP 110
+cat > /etc/openvpn/client-tcp-110.ovpn <<-END
 ##### DONT FORGET TO SUPPORT US #####
 client
 dev tun
 proto tcp
 remote xxxxxxxxx 1194
+http-proxy xxxxxxxxx 8080
 resolv-retry infinite
 route-method exe
 nobind
@@ -276,12 +273,10 @@ comp-lzo
 verb 3
 END
 
-sed -i $MYIP2 /etc/openvpn/client-tcp-1194.ovpn;
+sed -i $MYIP2 /etc/openvpn/client-tcp-110.ovpn;
 
 # Buat config client UDP 2200
 cat > /etc/openvpn/client-udp-2200.ovpn <<-END
-##### WELCOME TO HideSSH #####
-##### WWW.HideSSH.COM #####
 ##### DONT FORGET TO SUPPORT US #####
 client
 dev tun
@@ -301,8 +296,6 @@ sed -i $MYIP2 /etc/openvpn/client-udp-2200.ovpn;
 
 # Buat config client TCP 2200
 cat > /etc/openvpn/client-tcp-2200.ovpn <<-END
-##### WELCOME TO HideSSH #####
-##### WWW.HideSSH.COM #####
 ##### DONT FORGET TO SUPPORT US #####
 client
 dev tun
@@ -330,21 +323,21 @@ sed -i $MYIP2 /etc/openvpn/client-tcp-2200.ovpn;
 # pada tulisan xxx ganti dengan alamat ip address VPS anda 
 /etc/init.d/openvpn restart
 
-# masukkan certificatenya ke dalam config client TCP 1194
-echo '<ca>' >> /etc/openvpn/client-tcp-1194.ovpn
-cat /etc/openvpn/ca.crt >> /etc/openvpn/client-tcp-1194.ovpn
-echo '</ca>' >> /etc/openvpn/client-tcp-1194.ovpn
+# masukkan certificatenya ke dalam config client TCP 110
+echo '<ca>' >> /etc/openvpn/client-tcp-110.ovpn
+cat /etc/openvpn/ca.crt >> /etc/openvpn/client-tcp-110.ovpn
+echo '</ca>' >> /etc/openvpn/client-tcp-110.ovpn
 
-# masukkan certificatenya ke dalam config client UDP 1194
-echo '<ca>' >> /etc/openvpn/client-udp-1194.ovpn
-cat /etc/openvpn/ca.crt >> /etc/openvpn/client-udp-1194.ovpn
-echo '</ca>' >> /etc/openvpn/client-udp-1194.ovpn
+# masukkan certificatenya ke dalam config client UDP 110
+echo '<ca>' >> /etc/openvpn/client-udp-110.ovpn
+cat /etc/openvpn/ca.crt >> /etc/openvpn/client-udp-110.ovpn
+echo '</ca>' >> /etc/openvpn/client-udp-110.ovpn
 
-# Copy config OpenVPN client ke home directory root agar mudah didownload ( TCP 1194 )
-cp /etc/openvpn/client-tcp-1194.ovpn /home/vps/public_html/client-tcp-1194.ovpn
+# Copy config OpenVPN client ke home directory root agar mudah didownload ( TCP 110 )
+cp /etc/openvpn/client-tcp-110.ovpn /home/vps/public_html/client-tcp-110.ovpn
 
-# Copy config OpenVPN client ke home directory root agar mudah didownload ( UDP 1194 )
-cp /etc/openvpn/client-udp-1194.ovpn /home/vps/public_html/client-udp-1194.ovpn
+# Copy config OpenVPN client ke home directory root agar mudah didownload ( UDP 110 )
+cp /etc/openvpn/client-udp-110.ovpn /home/vps/public_html/client-udp-110.ovpn
 
 # masukkan certificatenya ke dalam config client TCP 2200
 echo '<ca>' >> /etc/openvpn/client-tcp-2200.ovpn
@@ -421,34 +414,14 @@ chmod +x /etc/network/if-up.d/iptables
 # install squid3
 cd
 apt-get -y install squid3
-wget -O /etc/squid/squid.conf "https://raw.githubusercontent.com/idtunnel/sshtunnel/master/debian9/squid3.conf"
+wget -O /etc/squid/squid.conf "https://raw.githubusercontent.com/emue25/sshtunnel/master/debian9/squid3.conf"
 sed -i $MYIP2 /etc/squid/squid.conf;
 /etc/init.d/squid restart
 
-#ovpnssl
-#ssl
-apt update && apt upgrade -y
-apt install stunnel4 -y
-cd /etc/stunnel/
-openssl req -new -newkey rsa:2048 -days 3650 -nodes -x509 -sha256 -subj '/CN=127.0.0.1/O=localhost/C=US' -keyout /etc/stunnel/stunnel.pem -out /etc/stunnel/stunnel.pem
-sudo touch stunnel.conf
-echo "client = no" | sudo tee -a /etc/stunnel/stunnel.conf
-echo "[openvpn]" | sudo tee -a /etc/stunnel/stunnel.conf
-echo "accept = 443" | sudo tee -a /etc/stunnel/stunnel.conf
-echo "connect = 127.0.0.1:1194" | sudo tee -a /etc/stunnel/stunnel.conf
-echo "cert = /etc/stunnel/stunnel.pem" | sudo tee -a /etc/stunnel/stunnel.conf
-sudo sed -i -e 's/ENABLED=0/ENABLED=1/g' /etc/default/stunnel4
-iptables -A INPUT -p tcp --dport 443 -j ACCEPT
-sudo cp /etc/stunnel/stunnel.pem ~
-/etc/init.d/stunnel4 restart
-
 # download script
-sudo apt-get install zip
-sudo apt-get install unzip
-cd /usr/local/bin/
-wget "https://github.com/emue25/cream/raw/mei/menu.zip"
-unzip menu.zip
-chmod +x /usr/local/bin/*
+
+echo "0 0 * * * root /sbin/reboot" > /etc/cron.d/reboot
+
 
 # restart opevpn
 /etc/init.d/openvpn restart
