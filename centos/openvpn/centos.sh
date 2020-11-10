@@ -1,5 +1,5 @@
 #!/bin/bash
-# Centos 6 64bit ( TCP dan UDP : 992 & 2200 )
+# Centos 6 64bit ( TCP dan UDP : 110 & 55 )
 # Original script by white-vps
 # Mod by hidessh
 # ==================================================
@@ -61,8 +61,8 @@ yum install easy-rsa -y
 cp -R /usr/share/doc/openvpn-2.2.2/easy-rsa/ /etc/openvpn/
 
 # konfigurasi OpenVPN pada VPS Centos server TCP 992
-cat > /etc/openvpn/server-tcp-992.conf <<-END
-port 992
+cat > /etc/openvpn/server-tcp-110.conf <<-END
+port 110
 proto tcp
 dev tun
 tun-mtu 1500
@@ -95,8 +95,8 @@ cd
 
 # konfigurasi OpenVPN pada VPS Centos server UDP 992
 
-cat > /etc/openvpn/server-udp-992.conf <<-END
-port 992
+cat > /etc/openvpn/server-udp-110.conf <<-END
+port 110
 proto udp
 dev tun
 tun-mtu 1500
@@ -129,8 +129,8 @@ cd
 
 # konfigurasi OpenVPN pada VPS Centos server TCP 2200
 
-cat > /etc/openvpn/server-tcp-2200.conf <<-END
-port 2200
+cat > /etc/openvpn/server-tcp-55.conf <<-END
+port 55
 proto tcp
 dev tun
 tun-mtu 1500
@@ -163,8 +163,8 @@ cd
 
 # konfigurasi OpenVPN pada VPS Centos server UDP 2200
 
-cat > /etc/openvpn/server-udp-2200.conf <<-END
-port 2200
+cat > /etc/openvpn/server-udp-55.conf <<-END
+port 55
 proto udp
 dev tun
 tun-mtu 1500
@@ -208,7 +208,7 @@ rm -rf ~/easy-rsa-2.2.2 && rm -rf ~/easy-rsa.tar.gz
 
 # Masuk ke directory Easy-RSA & Buat certificate
 cd /etc/openvpn/easy-rsa/2.0/
-wget -O /etc/openvpn/easy-rsa/2.0/vars "https://raw.githubusercontent.com/idtunnel/sshtunnel/master/centos/openvpn/vars.conf"
+wget -O /etc/openvpn/easy-rsa/2.0/vars "https://raw.githubusercontent.com/emue25/sshtunnel/master/centos/openvpn/vars.conf"
 
 # eksekusi vars
 source ./vars
@@ -298,14 +298,13 @@ chmod +x /etc/iptables-opvpn.conf
 mkdir -p /home/vps/public_html
 
 # Configurasi openvpn Client TCP 992
-cat > /etc/openvpn/client-tcp-992.ovpn <<-END
-##### WELCOME TO HIDESSH #####
-##### WWW.HIDESSH.COM #####
+cat > /etc/openvpn/client-tcp-110.ovpn <<-END
 ##### DONT FORGET TO SUPPORT US #####
 client
 dev tun
 proto tcp
-remote xxxxxxxxx 992
+remote xxxxxxxxx 110
+http-proxy xxxxxxxxx 8080
 resolv-retry infinite
 route-method exe
 nobind
@@ -316,17 +315,15 @@ comp-lzo
 verb 3
 END
 
-sed -i $MYIP2 /etc/openvpn/client-tcp-992.ovpn;
+sed -i $MYIP2 /etc/openvpn/client-tcp-110.ovpn;
 
-# Configurasi openvpn Client UDP 992
-cat > /etc/openvpn/client-udp-992.ovpn <<-END
-##### WELCOME TO HIDESSH #####
-##### WWW.HIDESSH.COM #####
+# Configurasi openvpn Client UDP 110
+cat > /etc/openvpn/client-udp-110.ovpn <<-END
 ##### DONT FORGET TO SUPPORT US #####
 client
 dev tun
 proto udp
-remote xxxxxxxxx 992
+remote xxxxxxxxx 110
 resolv-retry infinite
 route-method exe
 nobind
@@ -337,17 +334,15 @@ comp-lzo
 verb 3
 END
 
-sed -i $MYIP2 /etc/openvpn/client-udp-992.ovpn;
+sed -i $MYIP2 /etc/openvpn/client-udp-110.ovpn;
 
-# Configurasi openvpn Client TCP 2200
-cat > /etc/openvpn/client-tcp-2200.ovpn <<-END
-##### WELCOME TO HIDESSH #####
-##### WWW.HIDESSH.COM #####
+# Configurasi openvpn Client TCP 55
+cat > /etc/openvpn/client-tcp-55.ovpn <<-END
 ##### DONT FORGET TO SUPPORT US #####
 client
 dev tun
 proto tcp
-remote xxxxxxxxx 2200
+remote xxxxxxxxx 55
 ##### Modification VPN #####
 http-proxy-retry
 http-proxy xxxxxxxxx 3128
@@ -363,17 +358,15 @@ comp-lzo
 verb 3
 END
 
-sed -i $MYIP2 /etc/openvpn/client-tcp-2200.ovpn;
+sed -i $MYIP2 /etc/openvpn/client-tcp-55.ovpn;
 
-# Configurasi openvpn Client UDP 2200
-cat > /etc/openvpn/client-udp-2200.ovpn <<-END
-##### WELCOME TO HIDESSH #####
-##### WWW.HIDESSH.COM #####
+# Configurasi openvpn Client UDP 55
+cat > /etc/openvpn/client-udp-55.ovpn <<-END
 ##### DONT FORGET TO SUPPORT US #####
 client
 dev tun
 proto udp
-remote xxxxxxxxx 2200
+remote xxxxxxxxx 55
 resolv-retry infinite
 route-method exe
 nobind
@@ -384,104 +377,71 @@ comp-lzo
 verb 3
 END
 
-sed -i $MYIP2 /etc/openvpn/client-udp-2200.ovpn;
+sed -i $MYIP2 /etc/openvpn/client-udp-55.ovpn;
 
-# masukkan certificatenya ke dalam config client TCP 992
-echo '<ca>' >> /etc/openvpn/client-tcp-992.ovpn
-cat /etc/openvpn/ca.crt >> /etc/openvpn/client-tcp-992.ovpn
-echo '</ca>' >> /etc/openvpn/client-tcp-992.ovpn
+# masukkan certificatenya ke dalam config client TCP 110
+echo '<ca>' >> /etc/openvpn/client-tcp-110.ovpn
+cat /etc/openvpn/ca.crt >> /etc/openvpn/client-tcp-110.ovpn
+echo '</ca>' >> /etc/openvpn/client-tcp-110.ovpn
 
-# masukkan certificatenya ke dalam config client UDP 992
-echo '<ca>' >> /etc/openvpn/client-udp-992.ovpn
-cat /etc/openvpn/ca.crt >> /etc/openvpn/client-udp-992.ovpn
-echo '</ca>' >> /etc/openvpn/client-udp-992.ovpn
+# masukkan certificatenya ke dalam config client UDP 110
+echo '<ca>' >> /etc/openvpn/client-udp-110.ovpn
+cat /etc/openvpn/ca.crt >> /etc/openvpn/client-udp-110.ovpn
+echo '</ca>' >> /etc/openvpn/client-udp-110.ovpn
 
-# Copy config OpenVPN client ke home directory root agar mudah didownload ( TCP 992 )
-cp /etc/openvpn/client-tcp-992.ovpn /root/client-tcp-992.ovpn
+# Copy config OpenVPN client ke home directory root agar mudah didownload ( TCP 110 )
+cp /etc/openvpn/client-tcp-110.ovpn /root/client-tcp-110.ovpn
 
-# Copy config OpenVPN client ke home directory root agar mudah didownload ( UDP 992 )
-cp /etc/openvpn/client-udp-992.ovpn /root/client-udp-992.ovpn
+# Copy config OpenVPN client ke home directory root agar mudah didownload ( UDP 110 )
+cp /etc/openvpn/client-udp-110.ovpn /root/client-udp-110.ovpn
 
-# masukkan certificatenya ke dalam config client ( TCP 2200 )
-echo '<ca>' >> /etc/openvpn/client-tcp-2200.ovpn
-cat /etc/openvpn/ca.crt >> /etc/openvpn/client-tcp-2200.ovpn
-echo '</ca>' >> /etc/openvpn/client-tcp-2200.ovpn
+# masukkan certificatenya ke dalam config client ( TCP 55 )
+echo '<ca>' >> /etc/openvpn/client-tcp-55.ovpn
+cat /etc/openvpn/ca.crt >> /etc/openvpn/client-tcp-55.ovpn
+echo '</ca>' >> /etc/openvpn/client-tcp-55.ovpn
 
-# masukkan certificatenya ke dalam config client ( UDP 2200 )
-echo '<ca>' >> /etc/openvpn/client-udp-2200.ovpn
-cat /etc/openvpn/ca.crt >> /etc/openvpn/client-udp-2200.ovpn
-echo '</ca>' >> /etc/openvpn/client-udp-2200.ovpn
+# masukkan certificatenya ke dalam config client ( UDP 55 )
+echo '<ca>' >> /etc/openvpn/client-udp-55.ovpn
+cat /etc/openvpn/ca.crt >> /etc/openvpn/client-udp-55.ovpn
+echo '</ca>' >> /etc/openvpn/client-udp-55.ovpn
 
-# Copy config OpenVPN client ke home directory root agar mudah didownload ( TCP 2200 )
-cp /etc/openvpn/client-tcp-2200.ovpn /root/client-tcp-2200.ovpn
+# Copy config OpenVPN client ke home directory root agar mudah didownload ( TCP 55 )
+cp /etc/openvpn/client-tcp-55.ovpn /root/client-tcp-55.ovpn
 
-# Copy config OpenVPN client ke home directory root agar mudah didownload ( UDP 2200 )
-cp /etc/openvpn/client-udp-2200.ovpn /root/client-udp-2200.ovpn
+# Copy config OpenVPN client ke home directory root agar mudah didownload ( UDP 55 )
+cp /etc/openvpn/client-udp-55.ovpn /root/client-udp-55.ovpn
 
 # Simple password user
-wget -O /etc/pam.d/system-auth "https://raw.githubusercontent.com/idtunnel/sshtunnel/master/centos/pwd-vultr"
+wget -O /etc/pam.d/system-auth "https://raw.githubusercontent.com/emue25/sshtunnel/master/centos/pwd-vultr"
 chmod +x /etc/pam.d/system-auth
 
 # install squid
 yum -y install squid
-wget -O /etc/squid/squid.conf "https://raw.githubusercontent.com/idtunnel/sshtunnel/master/centos/squid-centos.conf"
+wget -O /etc/squid/squid.conf "https://raw.githubusercontent.com/emue25/sshtunnel/master/centos/squid-centos.conf"
 sed -i $MYIP2 /etc/squid/squid.conf;
 service squid restart
 chkconfig squid on
 
 # downlaod script
-cd /usr/bin
-wget -O speedtest "https://raw.githubusercontent.com/idtunnel/sshtunnel/master/centos/speedtest_cli.py"
-wget -O bench "https://raw.githubusercontent.com/idtunnel/sshtunnel/master/centos/bench-network.sh"
-wget -O mem "https://raw.githubusercontent.com/idtunnel/sshtunnel/master/centos/ps_mem.py"
-wget -O loginuser "https://raw.githubusercontent.com/idtunnel/sshtunnel/master/centos/login.sh"
-wget -O userlogin "https://raw.githubusercontent.com/idtunnel/sshtunnel/master/centos/user-login.sh"
-wget -O userexpire "https://raw.githubusercontent.com/idtunnel/sshtunnel/master/centos/autoexpire.sh"
-wget -O usernew "https://raw.githubusercontent.com/idtunnel/sshtunnel/master/centos/create-user.sh"
-wget -O renew "https://raw.githubusercontent.com/idtunnel/sshtunnel/master/centos/user-renew.sh"
-wget -O userlist "https://raw.githubusercontent.com/idtunnel/sshtunnel/master/centos/user-list.sh" 
-wget -O trial "https://raw.githubusercontent.com/idtunnel/sshtunnel/master/centos/user-trial.sh"
-wget -O jurus69 "https://raw.githubusercontent.com/idtunnel/sshtunnel/master/centos/restart.sh"
-wget -O delete "https://raw.githubusercontent.com/idtunnel/sshtunnel/master/centos/expired.sh"
-echo "cat log-install.txt" | tee info
-
-# sett permission
-chmod +x userlogin
-chmod +x loginuser
-chmod +x userexpire
-chmod +x usernew
-chmod +x renew
-chmod +x userlist
-chmod +x trial
-chmod +x jurus69
-chmod +x info
-chmod +x speedtest
-chmod +x bench
-chmod +x mem
-chmod +x delete
-
-# cron
 cd
-service crond start
-chkconfig crond on
-service crond stop
+apt-get install zip -y
+apt-get install unzip-y
+cd /usr/local/bin/
+wget "https://github.com/emue25/cream/raw/mei/menu.zip"
+unzip menu.zip
+chmod +x /usr/local/bin/*
 
-cat > /etc/crontab <<-END
-0 */6 * * * /usr/bin/jurus69
-END
-
-cd 
-
-chmod +x /etc/crontab
+#cronjoob
+echo "0 0 * * * root /sbin/reboot" > /etc/cron.d/reboot
 
 # set time GMT +7
-ln -fs /usr/share/zoneinfo/Asia/Jakarta /etc/localtime
+ln -fs /usr/share/zoneinfo/Asia/Kuala_Lumpur /etc/localtime
 
 # Membuat user SSH baru dengan home directory tanpa akses shell
-useradd -m -s /bin/false white-vps
+useradd -m -s /bin/false admin
 
 # Setelah membuat username SSH, kita harus memberikan password kepada user tersebut
-passwd white-vps
+passwd admin
 
 # menghapus user SSH/OpenVPN
 # userdel USERNAME
