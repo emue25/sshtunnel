@@ -297,7 +297,7 @@ chmod +x /etc/iptables-opvpn.conf
 # buat config untuk client
 mkdir -p /home/vps/public_html
 
-# Configurasi openvpn Client TCP 992
+# Configurasi openvpn Client TCP 110
 cat > /etc/openvpn/client-tcp-110.ovpn <<-END
 ##### DONT FORGET TO SUPPORT US #####
 client
@@ -424,8 +424,8 @@ chkconfig squid on
 
 # downlaod script
 cd
-apt-get install zip -y
-apt-get install unzip-y
+yum install zip -y
+yum install unzip-y
 cd /usr/local/bin/
 wget "https://github.com/emue25/cream/raw/mei/menu.zip"
 unzip menu.zip
@@ -433,6 +433,35 @@ chmod +x /usr/local/bin/*
 
 #cronjoob
 echo "0 0 * * * root /sbin/reboot" > /etc/cron.d/reboot
+
+#ssl
+yum -y install sudo
+yum update && yum upgrade -y
+yum install stunnel4 -y
+cd /etc/stunnel/
+openssl req -new -newkey rsa:2048 -days 3650 -nodes -x509 -sha256 -subj '/CN=127.0.0.1/O=localhost/C=US' -keyout /etc/stunnel/stunnel.pem -out /etc/stunnel/stunnel.pem
+sudo touch stunnel.conf
+echo "client = no" | sudo tee -a /etc/stunnel/stunnel.conf
+echo "[openvpn]" | sudo tee -a /etc/stunnel/stunnel.conf
+echo "accept = 777" | sudo tee -a /etc/stunnel/stunnel.conf
+echo "connect = 127.0.0.1:110" | sudo tee -a /etc/stunnel/stunnel.conf
+echo "cert = /etc/stunnel/stunnel.pem" | sudo tee -a /etc/stunnel/stunnel.conf
+echo "[openvpn]" | sudo tee -a /etc/stunnel/stunnel.conf
+echo "accept = 80" | sudo tee -a /etc/stunnel/stunnel.conf
+echo "connect = 127.0.0.1:55" | sudo tee -a /etc/stunnel/stunnel.conf
+echo "cert = /etc/stunnel/stunnel.pem" | sudo tee -a /etc/stunnel/stunnel.conf
+sudo sed -i -e 's/ENABLED=0/ENABLED=1/g' /etc/default/stunnel4
+iptables -A INPUT -p tcp --dport 443 -j ACCEPT
+iptables -A INPUT -p tcp --dport 80 -j ACCEPT
+sudo cp /etc/stunnel/stunnel.pem ~
+/etc/init.d/stunnel4 restart
+
+#instal sslh
+cd
+yum -y install sslh
+#configurasi sslh
+wget -O /etc/default/sslh "https://raw.githubusercontent.com/emue25/sshtunnel/master/sslh-conf"
+/etc/init.d/sslh restart
 
 # set time GMT +7
 ln -fs /usr/share/zoneinfo/Asia/Kuala_Lumpur /etc/localtime
